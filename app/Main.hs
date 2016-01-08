@@ -13,4 +13,6 @@ app :: Application
 app = serve siteAPI LMS.server
 
 main :: IO ()
-main = run 8081 app
+main = do
+  putStrLn "Listen on 8081."
+  run 8081 app

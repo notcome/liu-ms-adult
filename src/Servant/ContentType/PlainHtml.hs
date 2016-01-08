@@ -7,21 +7,17 @@ module Servant.ContentType.PlainHtml where
 
 import Data.Typeable        (Typeable)
 
-import Data.ByteString.Lazy (fromStrict)
-import Data.Text            (Text)
-import Data.Text.Encoding   (encodeUtf8)
-
 import Network.HTTP.Media   ((//), (/:))
 import Servant.API          (Accept (..), MimeRender (..))
 
-data PlainHtml deriving Typeable
+import Text.Blaze.Html               (ToMarkup, toMarkup)
+import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
 
-class ToPlainHtml a where
-  toPlainHtml :: a -> Text
+data PlainHtml deriving Typeable
 
 instance Accept PlainHtml where
   contentType _ = "text" // "html" /: ("charset", "utf-8")
 
 instance {-# OVERLAPPABLE #-}
-  ToPlainHtml a => MimeRender PlainHtml a where
-    mimeRender _ = fromStrict . encodeUtf8 . toPlainHtml
+  ToMarkup a => MimeRender PlainHtml a where
+    mimeRender _ = renderHtml . toMarkup

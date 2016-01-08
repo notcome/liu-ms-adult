@@ -24,6 +24,8 @@ library
 
                      , LiuMS.Template
 
+                     , LiuMS.Data.Index
+
   build-depends:       base >= 4.8 && < 5
                      , bytestring
                      , text

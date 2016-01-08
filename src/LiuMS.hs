@@ -18,8 +18,11 @@ import qualified Text.Hskribo as Hbo
 
 import LiuMS.Template
 
-type SiteAPI =
-  "document" :> Capture "title" String :> Get '[PlainHtml :<- Template] Hbo.Document
+import qualified Text.Blaze.Html5 as H
+import qualified LiuMS.Data.Index as Index
+
+type SiteAPI = Get '[PlainHtml] Hbo.Document
+  :<|> "document" :> Capture "title" String :> Get '[PlainHtml :<- Template] Hbo.Document
 
 document :: String -> Hbo.Document
 document _ = section
@@ -28,4 +31,5 @@ document _ = section
   ]
 
 server :: Server SiteAPI
-server = return . document
+server = return Index.document
+  :<|>   return . document
