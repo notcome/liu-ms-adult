@@ -24,31 +24,38 @@ instance {-# OVERLAPPABLE #-}
 render :: ToMarkup doc => SiteInfo -> doc -> Html
 render info doc = H.html ! A.lang siteLang $ do
   H.docType
-  H.head $ do
-    H.meta ! A.charset "utf-8"
-    H.title siteTitle
-    H.meta ! A.name    "description"
-           ! A.content siteDesc
-    H.meta ! A.name    "author"
-           ! A.content siteAuthor
-    H.meta ! A.name    "viewport"
-           ! A.content "width=device-width, initial-scale=1"
-    H.link ! A.rel     "stylesheet"
-           ! A.href    "/css/basic"
+  htmlHead
   H.body $ do
-    H.header $ H.nav $ H.ul headerItems
-    toMarkup doc
-    H.footer $ H.p $ "保留所有权利"
+    pageHeader
+    H.main $ toMarkup doc
 
   where
     siteLang   = fromString $ language    info
     siteTitle  = fromString $ title       info
     siteDesc   = fromString $ description info
     siteAuthor = fromString $ author      info
-    headerItems :: Html
-    headerItems = let
-      item (ref, text) = H.li $ H.a ! A.href ref $ text
-      in mapM_ item [ ("/", "首页")
-                    , ("/projects", "项目")
-                    , ("/posts", "文章")
-                    , ("/about", "关于")]
+
+    htmlHead :: Html
+    htmlHead = H.head $ do
+      H.meta ! A.charset "utf-8"
+      H.title siteTitle
+      H.meta ! A.name    "description"
+             ! A.content siteDesc
+      H.meta ! A.name    "author"
+             ! A.content siteAuthor
+      H.meta ! A.name    "viewport"
+             ! A.content "width=device-width, initial-scale=1"
+      H.link ! A.rel     "stylesheet"
+             ! A.href    "/css/basic"
+
+    pageHeader :: Html
+    pageHeader = H.header $ do
+      H.figure $ H.img ! A.src "/static/logo.png"
+      H.nav $ H.ul headerItems
+      where
+        headerItems = let
+          item (ref, text) = H.li $ H.a ! A.href ref $ text
+          in mapM_ item [ ("/", "首页")
+                        , ("/projects", "项目")
+                        , ("/posts", "文章")
+                        , ("/about", "关于")]

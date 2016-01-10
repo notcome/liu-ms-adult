@@ -20,6 +20,7 @@ import Text.Pandoc.Writers.HTML
 
 import Servant
 import Servant.Server
+import Servant.Utils.StaticFiles
 
 import Servant.ContentType.PlainHtml
 import Servant.ContentType.Processable
@@ -33,7 +34,8 @@ type SiteAPI    = Gets
   :<|> "about" :> Gets
   -- :<|> "posts"    :> PostsAPI
   -- :<|> "projects" :> ProjectsAPI
-  :<|> "css"   :> CssAPI
+  :<|> "css"    :> CssAPI
+  :<|> "static" :> Raw
 
 type PostsAPI = Capture "year"  Integer
              :> Capture "month" Integer
@@ -61,7 +63,11 @@ page filename = do
 css :: Server CssAPI
 css = return cssBasic
 
+static :: Server Raw
+static = serveDirectory $ rootPath ++ "static/"
+
 server :: Server SiteAPI
 server = page "index.md"
     :<|> page "about.md"
     :<|> css
+    :<|> static
