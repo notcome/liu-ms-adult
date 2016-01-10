@@ -1,0 +1,21 @@
+# Metadata of Liu.MS
+# Content of this file, after loaded by the program, will be passed as an
+# explicit parameter of the template-rendering function.
+
+languages:
+  - cn
+  - en
+
+site_info:
+  cn:
+    title: Liu.ms
+    description: >1-
+      我，刘闽晟，是一位对计算机科学、语言学、政治科学感兴趣的本科生。点击网站来了解我的生活、兴趣、观点。
+    author: 刘闽晟
+    language: cmn-Hans-CN
+  en:
+    title: Liu.ms
+    description: >1-
+      I am Minsheng Liu, an undergraduate interested in CS, Linguistics, and Political Science. Click this site to learn more about my life, interests, and viewpoints.
+    author: Minsheng Liu
+    language: eng-Latn-US
