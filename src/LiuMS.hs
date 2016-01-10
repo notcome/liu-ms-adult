@@ -2,34 +2,66 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeOperators     #-}
 
-{-# LANGUAGE FlexibleInstances     #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeFamilies          #-}
-{-# LANGUAGE TypeSynonymInstances  #-}
-
 module LiuMS where
 
+import Control.Monad
+import Control.Monad.Trans.Either
+import Control.Monad.IO.Class
+import System.Directory
+
+import Data.ByteString.Lazy.Char8 (pack)
+
+import Text.Blaze.Html (Html)
+import Clay            (Css)
+
+import Text.Pandoc.Options
+import Text.Pandoc.Readers.Markdown
+import Text.Pandoc.Writers.HTML
+
 import Servant
-import Servant.ContentType.Processable
+import Servant.Server
+
 import Servant.ContentType.PlainHtml
+import Servant.ContentType.Processable
+import Servant.ContentType.ClayCss
+import LiuMS.Template.Basic
+import LiuMS.Css.Basic
 
-import           Text.Hskribo (text, emph, def, heading, par, section, aside)
-import qualified Text.Hskribo as Hbo
+type Gets = Get '[PlainHtml :<- Basic] Html
 
-import LiuMS.Template
+type SiteAPI    = Gets
+  :<|> "about" :> Gets
+  -- :<|> "posts"    :> PostsAPI
+  -- :<|> "projects" :> ProjectsAPI
+  :<|> "css"   :> CssAPI
 
-import qualified Text.Blaze.Html5 as H
-import qualified LiuMS.Data.Index as Index
+type PostsAPI = Capture "year"  Integer
+             :> Capture "month" Integer
+             :> (Gets :<|> Raw)
 
-type SiteAPI = Get '[PlainHtml] Hbo.Document
-  :<|> "document" :> Capture "title" String :> Get '[PlainHtml :<- Template] Hbo.Document
+type ProjectsAPI = Capture "project" String
+                :> (Gets :<|> Raw)
 
-document :: String -> Hbo.Document
-document _ = section
-  [ heading [text "LLVM 项目到底是要解决哪些基础设施问题？"]
-  , par [def [text "LLVM"], text "，曾经叫", emph [text "Low Level Virtual Machine"], text "是一套编译器后端基础设施。"]
-  ]
+type CssAPI = "basic" :> Get '[ClayCss] Css
+
+rootPath :: FilePath
+rootPath = "/Users/Liu.MS/Coding/liu-ms-adult/site/"
+
+page :: FilePath -> Server Gets
+page filename = do
+  let path = rootPath ++ filename
+  exists   <- liftIO $ doesFileExist path
+  unless exists $ left fileNotFoundErr
+  textFile <- liftIO $ readFile path
+  let (Right markdown) = readMarkdown def textFile
+  return $ writeHtml def markdown
+  where
+    fileNotFoundErr = err404 { errBody = pack $ filename ++ " not found." }
+
+css :: Server CssAPI
+css = return cssBasic
 
 server :: Server SiteAPI
-server = return Index.document
-  :<|>   return . document
+server = page "index.md"
+    :<|> page "about.md"
+    :<|> css

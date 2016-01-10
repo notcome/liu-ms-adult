@@ -18,17 +18,18 @@ library
   exposed-modules:     LiuMS
   other-modules:       Servant.ContentType.Processable
                      , Servant.ContentType.PlainHtml
+                     , Servant.ContentType.ClayCss
 
-                     , Text.Hskribo.Type
-                     , Text.Hskribo
-
-                     , LiuMS.Template
-
-                     , LiuMS.Data.Index
+                     , LiuMS.SiteInfo
+                     , LiuMS.Template.Basic
+                     , LiuMS.Css.Basic
 
   build-depends:       base >= 4.8 && < 5
                      , bytestring
+                     , directory
+                     , either
                      , text
+                     , transformers
 
                      , http-media
                      , servant
@@ -36,6 +37,8 @@ library
 
                      , blaze-markup
                      , blaze-html
+                     , clay
+                     , pandoc
   default-language:    Haskell2010
 
 executable liu-ms-adult-exe
