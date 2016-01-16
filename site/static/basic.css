@@ -36,11 +36,9 @@ a {
   text-decoration: none;
 }
 
-.topnav-list-mobile li, [toggle-topnav-list] .topnav-list li {
-  opacity: 1;
-  transition: opacity 0.2s;
-}
-.topnav-list-mobile li:hover, [toggle-topnav-list] .topnav-list li:hover {
+.topnav-list-mobile li:hover,
+.topnav-list li:hover,
+[toggle-topnav-list] .topnav-list li:hover {
   opacity: 0.8;
 }
 
@@ -75,23 +73,23 @@ a {
   .topnav-list-mobile li:nth-child(2) {
     left: 50%;
   }
-
+  .topnav-list-mobile li {
+    opacity: 1;
+    transition: opacity 0.2s;
+  }
   .topnav-item-lms {
     margin-left: -12px;
+  }
+  [toggle-topnav-list] .topnav-item-menu {
+    background-image: url('/static/topnav/item-menu-close.svg');
   }
 
   [toggle-topnav-list] {
     overflow: hidden;
   }
-
   [toggle-topnav-list] #topnav {
     height: 100vh;
     background-color: black;
-  }
-
-  [toggle-topnav-list] #topnav .topnav-list {
-    visibility: visible;
-    transition: visibility 0.4s ease;
   }
 
   .topnav-list {
@@ -99,12 +97,11 @@ a {
     margin-top: 12px;
     padding-left: 48px;
     padding-right: 48px;
-
     transition: visibility 0s ease 0.4s;
   }
-
-  .topnav-list li:first-child {
-    display: none;
+  [toggle-topnav-list] #topnav .topnav-list {
+    visibility: visible;
+    transition: visibility 0.4s ease;
   }
 
   .topnav-list li {
@@ -114,15 +111,20 @@ a {
     line-height: 24px;
     padding-top: 12px;
     border-bottom: #333333 solid 1px;
-
-    opacity: 0;
-    transform: scale(1.1) translateY(-24px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .topnav-list li:first-child {
+    display: none;
   }
 
+  .topnav-list li {
+    opacity: 0;
+    transform: scale(1.1) translateY(-24px);
+    transition: opacity 0.3s cubic-bezier(0.65, 0, 0.35, 1), transform 0.4s ease;
+  }
   [toggle-topnav-list] .topnav-list li {
     transform: none;
     opacity: 1;
+    transition: opacity 0.2s cubic-bezier(0.65, 0, 0.35, 1);, transform 0.4s;
   }
 
   .topnav-list a {
@@ -145,6 +147,7 @@ a {
     line-height: 24px;
     padding-top: 12px;
     margin: 0 48px;
+    transition: opacity 0.2s cubic-bezier(0.65, 0, 0.35, 1);;
   }
   .topnav-list li:first-of-type {
     margin-left: auto;

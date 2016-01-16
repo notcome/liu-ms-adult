@@ -55,10 +55,8 @@ render info doc = H.html ! A.lang siteLang $ do
       H.ul ! class_ "list-mobile" $ do
         iconItem "menu" "#" ! A.onclick "toggle('topnav-list')"
         iconItem "lms"  "/"
-        -- H.li $ iconLink "menu" ! A.onclick "toggle('topnav-list')"
-        -- H.li $ iconLink "lms"  ! A.href "/"
       H.ul ! class_ "list" $ do
-        -- H.li $ iconLink "lms"  ! A.href "/"
+        iconItem "lms"  "/"
         mapM_ textItem $ [ ("文章", "/articles")
                          , ("项目", "/projects")
                          , ("照片", "/photos")
