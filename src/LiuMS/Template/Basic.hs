@@ -5,6 +5,7 @@
 
 module LiuMS.Template.Basic where
 
+import Data.Monoid
 import Data.String (fromString)
 
 import Text.Blaze.Html5 (Html, ToMarkup, (!), toMarkup)
@@ -28,6 +29,7 @@ render info doc = H.html ! A.lang siteLang $ do
   H.body $ do
     pageHeader
     H.main $ toMarkup doc
+    H.script ! A.src "static/basic.js" $ ""
 
   where
     siteLang   = fromString $ language    info
@@ -46,16 +48,29 @@ render info doc = H.html ! A.lang siteLang $ do
       H.meta ! A.name    "viewport"
              ! A.content "width=device-width, initial-scale=1"
       H.link ! A.rel     "stylesheet"
-             ! A.href    "/css/basic"
+             ! A.href    "static/basic.css"
+
+    topnav :: Html
+    topnav = H.nav ! A.id "topnav" $ do
+      H.ul ! class_ "list-mobile" $ do
+        iconItem "menu" "#" ! A.onclick "toggle('topnav-list')"
+        iconItem "lms"  "/"
+        -- H.li $ iconLink "menu" ! A.onclick "toggle('topnav-list')"
+        -- H.li $ iconLink "lms"  ! A.href "/"
+      H.ul ! class_ "list" $ do
+        -- H.li $ iconLink "lms"  ! A.href "/"
+        mapM_ textItem $ [ ("文章", "/articles")
+                         , ("项目", "/projects")
+                         , ("照片", "/photos")
+                         , ("关于", "/about")
+                         ]
+      where
+        class_   className   = A.class_ ("topnav-" <> className)
+        iconItem class' href = H.li $ do
+          H.a ! class_ ("item-" <> class')
+              ! A.href href
+              $ ""
+        textItem (txt, ref)  = H.li $ H.a ! A.href ref $ txt
 
     pageHeader :: Html
-    pageHeader = H.header $ do
-      H.figure $ H.img ! A.src "/static/logo.png"
-      H.nav $ H.ul headerItems
-      where
-        headerItems = let
-          item (ref, text) = H.li $ H.a ! A.href ref $ text
-          in mapM_ item [ ("/", "首页")
-                        , ("/projects", "项目")
-                        , ("/posts", "文章")
-                        , ("/about", "关于")]
+    pageHeader = H.header $ topnav

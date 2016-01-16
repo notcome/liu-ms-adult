@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.2 (15855) - http://www.bohemiancoding.com/sketch -->
+    <title>Liumda</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="小图标" sketch:type="MSArtboardGroup" transform="translate(-36.000000, -6.000000)">
+            <g id="Liumda" sketch:type="MSLayerGroup" transform="translate(36.000000, 6.000000)">
+                <rect id="Holder" fill-opacity="0" fill="#D8D8D8" sketch:type="MSShapeGroup" x="0" y="0" width="24" height="24"></rect>
+                <polygon id="Path" fill="#FFFFFF" sketch:type="MSShapeGroup" points="6.10447618 0.417692874 20.6537898 23.9767465 14.3419094 23.9767465 9.28472165 15.6095942 7.70778997 23.9767465 1.39141033 23.9767465 4.58784656 8.19739253 0 0.417692874 "></polygon>
+                <polygon id="Vebar" fill="#FFFFFF" sketch:type="MSShapeGroup" points="17.4891306 0 23.2983685 0 23.2983685 23.9284942 21.9987776 23.9284942 17.4560449 16.1443427 "></polygon>
+                <polygon id="Delta" fill="#FFFFFF" sketch:type="MSShapeGroup" points="16.1226706 4.17243976 16.2242651 14.3061254 10.1074203 4.17243976 "></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
