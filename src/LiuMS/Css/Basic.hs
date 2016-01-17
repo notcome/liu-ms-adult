@@ -71,3 +71,16 @@ baseCss = do
     nav |> ul |> li ? do
       textAlign    $ alignSide sideCenter
       marginBottom $ em 0.5
+
+topnav :: Css
+topnav = do
+  ".topnav-wrapper" ? height (px 48)
+  "#topnav" ? do
+    height $ px  48
+    width  $ pct 100
+    position absolute
+    backgroundColor "#333333"
+    transition "all" (ms 400) ease (ms 0)
+    ".topnav-list" |> a ? do
+      color white
+      ":hover" ? textDecoration none

@@ -1,11 +1,34 @@
-# About
+# 关于
 
-I am a citizen of the People’s Republic of China and a native speaker of Mandarin Chinese.
+## 知识技能
 
-I am currently a first-year undergraduate student at University of California, San Diego, with a declared major in Linguistics, a planned second major in Mathematics, and a planned minor in Political Science.
+我目前是一名 [UCSD](https://ucsd.edu) 的大一新生，专业是语言学。
 
-I am interested in programming elegantly. As a result my experience and ability of developing real world apps are severely inadequate. I have limited exposure to a variety of programming languages including but not limited to C/C++, C#, Java, ECMAScript, Scheme, Objective-C, and Swift. Obviously I know nothing about Haskell. In fact I have never heard of it.
+我对程序语言有些兴趣，懂些 [Haskell](https://haskell.org) 皮毛。
 
-I am interested in programming languages and computational linguistics. The latter reflects my general interest in *artificial intelligence*. I believe AI is essential to future science advancement, and more powerful development tools are essential to the emergence of any non-trivial AI.
+## 联系方式
 
-Some less serious matter. I love typography, UI design as well as UX design, and hardware products by Apple. I love sans serif typefaces and dislike serif ones, despite the fact that my favorite typeface is Charter.
+### 电子邮件
+
+我目前拥有以下三个邮件地址：
+
+* ``lambda@`` 本站域名，用于与计算机科学或编程有关的事务。
+* ``minsheng@`` 学校域名，用于与学术有关的事务。
+* ``hi@`` 本站域名，用于其它一切事务。
+
+### 社交网络
+
+我使用这些社交网络：
+
+* [GitHub](https://github.com/notcome)
+* [知乎](https://zhihu.com/people/liu-ms)
+* [Twitter](https://twitter.com/@Selveskii)
+* [Tumblr](https://inversentropy.tumblr.com)
+
+## 兴趣爱好
+
+我对 UI/UX 设计、排版有些兴趣，喜欢《星球大战》，在自学烧菜。
+
+## 个人网站
+
+<ruby>借鉴<rt>抄袭</rt></ruby>了 [ 的设计](https://apple.com) ，在此表示感谢。

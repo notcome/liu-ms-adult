@@ -27,7 +27,7 @@ render info doc = H.html ! A.lang siteLang $ do
   H.docType
   htmlHead
   H.body $ do
-    pageHeader
+    topnav
     H.main $ toMarkup doc
     H.script ! A.src "static/basic.js" $ ""
 
@@ -51,17 +51,19 @@ render info doc = H.html ! A.lang siteLang $ do
              ! A.href    "static/basic.css"
 
     topnav :: Html
-    topnav = H.nav ! A.id "topnav" $ do
-      H.ul ! class_ "list-mobile" $ do
-        iconItem "menu" "#" ! A.onclick "toggle('topnav-list')"
-        iconItem "lms"  "/"
-      H.ul ! class_ "list" $ do
-        iconItem "lms"  "/"
-        mapM_ textItem $ [ ("文章", "/articles")
-                         , ("项目", "/projects")
-                         , ("照片", "/photos")
-                         , ("关于", "/about")
-                         ]
+    topnav = H.header ! class_ "wrapper" $ do
+      H.nav ! A.id "topnav" $ do
+        H.ul ! class_ "list-mobile" $ do
+          iconItem "menu" "#" ! A.onclick "toggle('topnav-list', event)"
+            ! H.customAttribute "ontouchstart" "toggle('topnav-list', event)"
+          iconItem "lms"  "/"
+        H.ul ! class_ "list"        $ do
+          iconItem "lms"  "/"
+          mapM_ textItem $ [ ("文章", "/articles")
+                           , ("项目", "/projects")
+                           , ("照片", "/photos")
+                           , ("关于", "/about")
+                           ]
       where
         class_   className   = A.class_ ("topnav-" <> className)
         iconItem class' href = H.li $ do
@@ -69,6 +71,3 @@ render info doc = H.html ! A.lang siteLang $ do
               ! A.href href
               $ ""
         textItem (txt, ref)  = H.li $ H.a ! A.href ref $ txt
-
-    pageHeader :: Html
-    pageHeader = H.header $ topnav
