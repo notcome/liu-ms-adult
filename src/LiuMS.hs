@@ -47,7 +47,7 @@ type ProjectsAPI = Capture "project" String
 type CssAPI = "basic" :> Get '[ClayCss] Css
 
 rootPath :: FilePath
-rootPath = "/Users/Liu.MS/Coding/liu-ms-adult/site/"
+rootPath = "./site/"
 
 page :: FilePath -> Server Gets
 page filename = do
