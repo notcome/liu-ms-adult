@@ -29,7 +29,7 @@ render info doc = H.html ! A.lang siteLang $ do
   H.body $ do
     topnav
     H.main $ toMarkup doc
-    H.script ! A.src "static/basic.js" $ ""
+    H.script ! A.src "static/js/basic.js" $ ""
 
   where
     siteLang   = fromString $ language    info
@@ -48,7 +48,7 @@ render info doc = H.html ! A.lang siteLang $ do
       H.meta ! A.name    "viewport"
              ! A.content "width=device-width, initial-scale=1"
       H.link ! A.rel     "stylesheet"
-             ! A.href    "static/basic.css"
+             ! A.href    "static/css/basic.css"
 
     topnav :: Html
     topnav = H.header ! class_ "wrapper" $ do

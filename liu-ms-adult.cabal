@@ -18,11 +18,9 @@ library
   exposed-modules:     LiuMS
   other-modules:       Servant.ContentType.Processable
                      , Servant.ContentType.PlainHtml
-                     , Servant.ContentType.ClayCss
 
                      , LiuMS.SiteInfo
                      , LiuMS.Template.Basic
-                     , LiuMS.Css.Basic
 
   build-depends:       base >= 4.8 && < 5
                      , bytestring
