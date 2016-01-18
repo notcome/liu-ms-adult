@@ -29,6 +29,7 @@ render info doc = H.html ! A.lang siteLang $ do
   H.body $ do
     topnav
     H.main $ toMarkup doc
+    footer
     H.script ! A.src "static/js/basic.js" $ ""
 
   where
@@ -71,3 +72,8 @@ render info doc = H.html ! A.lang siteLang $ do
               ! A.href href
               $ ""
         textItem (txt, ref)  = H.li $ H.a ! A.href ref $ txt
+
+    footer :: Html
+    footer = H.footer $ H.div ! A.class_ "content" $ do
+        H.p $ "刘闽晟作品。转载、使用许可，请点击" <> here <>"。"
+      where here = H.a ! A.href "/copyright" $ "此处"
