@@ -3,12 +3,6 @@
 {-# LANGUAGE RankNTypes        #-}
 {-# LANGUAGE TypeOperators     #-}
 
-
-
-
-
-{-# LANGUAGE TypeFamilies     #-}
-
 module LiuMS where
 
 import Control.Monad
@@ -19,13 +13,16 @@ import System.Directory
 
 import Data.ByteString.Lazy.Char8 (pack)
 
-import Text.Blaze.Html (Html)
+import Text.Blaze.Html     (Html)
+import Text.Blaze.Internal (unsafeByteString)
 
 import Text.Pandoc.Options
 import Text.Pandoc.Readers.Markdown
 import Text.Pandoc.Writers.HTML
 
 import Servant
+import Servant.API.WaiApp
+
 import System.FilePath (addTrailingPathSeparator)
 import Network.Wai
 import Network.Wai.Application.Static (staticApp, defaultFileServerSettings)
@@ -34,21 +31,8 @@ import Servant.ContentType.PlainHtml
 import Servant.ContentType.Processable
 import LiuMS.Template.Basic
 
-
-
-
-
-import Data.Typeable (Typeable)
-import Servant.Server.Internal
-data MyRaw deriving Typeable
-
-instance HasServer MyRaw where
-
-  type ServerT MyRaw m = m Application
-
-  route Proxy wrappedApp request respond = do
-    (Right rawApp) <- runEitherT wrappedApp
-    rawApp request (respond . succeedWith)
+import LiuMS.Config
+import LiuMS.CacheManager
 
 type Gets = Get '[PlainHtml :<- Basic] Html
 
@@ -56,7 +40,7 @@ type SiteAPI    = Gets
   :<|> "about" :> Gets
   -- :<|> "posts"    :> PostsAPI
   -- :<|> "projects" :> ProjectsAPI
-  :<|> "static" :> MyRaw
+  :<|> "static" :> WaiApp
 
 type PostsAPI = Capture "year"  Integer
              :> Capture "month" Integer
@@ -65,11 +49,9 @@ type PostsAPI = Capture "year"  Integer
 type ProjectsAPI = Capture "project" String
                 :> (Gets :<|> Raw)
 
-type LiuMSHandler = ReaderT FilePath (EitherT ServantErr IO)
-
-hostPage :: FilePath -> LiuMSHandler Html
+hostPage :: FilePath -> Handler Html
 hostPage page = do
-  root <- ask
+  root <- askContentPath
   let pageDir  = root ++ "/contents/" ++ page ++ "/"
   let textPath = pageDir ++ "index.md"
   exists   <- liftIO $ doesFileExist textPath
@@ -81,25 +63,21 @@ hostPage page = do
     fileNotFoundErr = err404 {
       errBody = pack $ page ++ " not found." }
 
-hostStatic :: FilePath -> LiuMSHandler Application
+hostStatic :: FilePath -> Handler Application
 hostStatic path = do
-  root <- ask
-  return $ serveDirectory $ root ++ path
-  where
-    serveDirectory = staticApp . defaultFileServerSettings . addTrailingPathSeparator
+  root <- askContentPath
+  return $ Servant.API.WaiApp.serveDirectory $ root ++ "/" ++ path
 
-liuMSServer :: ServerT SiteAPI LiuMSHandler
-liuMSServer = hostPage "index"
-         :<|> hostPage "about"
+liuMSServer :: ServerT SiteAPI Handler
+liuMSServer = load "index"
+         :<|> load "about"
          :<|> hostStatic "static"
+  where
+    load :: FilePath -> Handler Html
+    load path = do
+      manager <- askCacheManager
+      result  <- lift $ loadResource "md" manager path
+      return $ unsafeByteString result
 
-server :: FilePath -> Server SiteAPI
-server root = enter (runLiuMSHandlerNat root) liuMSServer
-
-runLiuMSHandlerNat' :: FilePath
-                    -> (forall a. LiuMSHandler a -> EitherT ServantErr IO a)
-runLiuMSHandlerNat' path handler = runReaderT handler path
-
-runLiuMSHandlerNat :: FilePath
-                   -> (LiuMSHandler :~> EitherT ServantErr IO)
-runLiuMSHandlerNat path = Nat $ runLiuMSHandlerNat' path
+server :: Config -> Server SiteAPI
+server config = enter (runHandlerNat config) liuMSServer

@@ -5,43 +5,57 @@ description:         Please see README.md
 homepage:            http://github.com/githubuser/liu-ms-adult#readme
 license:             BSD3
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2010 Author Here
+author:              Minsheng Liu
+maintainer:          lambda@liu.ms
+copyright:           Minsheng Liu
 category:            Web
 build-type:          Simple
 -- extra-source-files:
 cabal-version:       >=1.10
 
 library
-  hs-source-dirs:      src
-  exposed-modules:     LiuMS
-  other-modules:       Servant.ContentType.Processable
-                     , Servant.ContentType.PlainHtml
+  hs-source-dirs:       src
+  exposed-modules:      LiuMS
+                      , LiuMS.Config
 
-                     , LiuMS.SiteInfo
-                     , LiuMS.Template.Basic
+  other-modules:        Servant.ContentType.Processable
+                      , Servant.ContentType.PlainHtml
+                      , Servant.API.WaiApp
 
-  build-depends:       base >= 4.8 && < 5
-                     , bytestring
-                     , directory
-                     , either
-                     , mtl
-                     , text
-                     , transformers
+                      , LiuMS.SiteInfo
+                      , LiuMS.Template.Basic
 
-                     , filepath
-                     , http-media
-                     , servant
-                     , servant-server >= 0.4 && < 0.5
-                     , wai
-                     , wai-app-static
+                      , LiuMS.CacheManager
+                      , LiuMS.Compiler
+                      , LiuMS.Compiler.Markdown
 
-                     , blaze-markup
-                     , blaze-html
-                     , clay
-                     , pandoc
-  default-language:    Haskell2010
+  build-depends:        base >= 4.8 && < 5
+                      , bytestring
+                      , directory
+                      , either
+                      , mtl
+                      , text
+                      , transformers
+
+                      , filepath
+                      , http-media
+                      , servant
+                      , servant-server >= 0.4 && < 0.5
+                      , wai
+                      , wai-app-static
+
+                      , blaze-markup
+                      , blaze-html
+                      , clay
+                      , pandoc
+
+  default-language:     Haskell2010
+
+  default-extensions:   FlexibleContexts
+                      , FlexibleInstances
+                      , MultiParamTypeClasses
+                      , RankNTypes
+                      , ScopedTypeVariables
 
 executable liums
   hs-source-dirs:      app
