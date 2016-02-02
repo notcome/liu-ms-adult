@@ -66,6 +66,8 @@ executable liums
                      , servant-server >= 0.4 && < 0.5
                      , wai
                      , warp
+                     , directory
+                     , filepath
   default-language:    Haskell2010
 
 test-suite liu-ms-adult-test
