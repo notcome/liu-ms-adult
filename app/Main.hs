@@ -10,7 +10,6 @@ module Main where
 import Control.Applicative
 import Control.Monad
 import Data.Maybe
-import Debug.Trace
 import System.Directory
 import System.Environment
 import System.FilePath
@@ -65,22 +64,21 @@ buildLibrary :: [String] -> String -> FilePath -> IO (Maybe (FilePath, Library))
 buildLibrary exts lang path = do
   isFile <- doesFileExist      path
   isDir  <- doesDirectoryExist path
-  resultAsFile <- handleFile isFile
-  resultAsDir  <- handleDir  isDir
-  return $ resultAsFile <|> resultAsDir
+  (<|>) <$> handleFile isFile <*> handleDir isDir
   where
+    asLocalized :: FilePath -> Maybe (FilePath, String)
+    asLocalized x = let (lang', name') = splitAt 3 $ reverse x
+                        (lang,  name)  = (reverse lang', reverse name')
+                    in if head lang == '_' then Just (name, tail lang) else Nothing
+
     wantedFileName :: Maybe FilePath
     wantedFileName = let
       baseName         = takeBaseName  path
       extension        = takeExtension path
-      (partL', partN') = splitAt 3 $ reverse baseName
-      (partL,  partN)  = (reverse partL', reverse partN')
-      in do unless (extension `elem` exts) $ Nothing
-            if head partL /= '_'
-            then return baseName
-            else if tail partL == lang
-                 then return partN
-                 else Nothing
+      in do unless (extension `elem` exts) $ mzero
+            case asLocalized baseName of
+              Nothing            -> return baseName
+              Just (name, lang') -> if lang == lang' then return name else mzero
 
     handleFile :: Bool -> IO (Maybe (FilePath, Library))
     handleFile False = return Nothing
