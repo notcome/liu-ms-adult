@@ -114,5 +114,5 @@ main = do
          (Just (_, lib)) <- buildLibrary [".md"] "cn" path
          print lib
          return ()
-         --putStrLn $ "listen on port " ++ show port
-         --run port (app config)
+         putStrLn $ "listen on port " ++ show port
+         run port (app config)

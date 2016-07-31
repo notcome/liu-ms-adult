@@ -3,7 +3,7 @@ module LiuMS.CacheManager where
 import Prelude hiding (readFile, writeFile)
 
 import Control.Monad
-import Control.Monad.Trans.Either
+import Control.Monad.Trans.Except
 import Control.Monad.IO.Class
 import Data.ByteString
 import System.Directory
@@ -17,12 +17,12 @@ import LiuMS.Compiler
 data CacheManager = CacheManager FilePath FilePath [(String, Compiler)]
 
 loadResource :: String -> CacheManager -> FilePath
-             -> EitherT ServantErr IO ByteString
+             -> ExceptT ServantErr IO ByteString
 loadResource suffix (CacheManager contents cache compilers) path = do
   compiler       <- getCompiler suffix compilers
   liftIO $ Prelude.putStrLn resourceFullPath
   resourceExists <- liftIO $ doesFileExist resourceFullPath
-  unless resourceExists $ left errResourceNotFound
+  unless resourceExists $ throwE errResourceNotFound
 
   if cachable compiler
     then do
@@ -34,9 +34,10 @@ loadResource suffix (CacheManager contents cache compilers) path = do
 
   where
     filename, resourceFullPath, cacheFullPath :: FilePath
-    filename = "cmn-hans-cn." ++ suffix
-    resourceFullPath = joinPath [contents, path, filename]
-    cacheFullPath    = joinPath [cache,    path, filename]
+    filename = path ++ "." ++ suffix
+    --filename = "cmn-hans-cn." ++ suffix
+    resourceFullPath = joinPath [contents, filename]
+    cacheFullPath    = joinPath [cache,    filename]
 
     errResourceNotFound :: ServantErr
     errResourceNotFound = err500 {
@@ -47,13 +48,13 @@ loadResource suffix (CacheManager contents cache compilers) path = do
       errBody = BL.pack $ "Compiler for ." ++ suffix ++ " not found." }
 
     getCompiler :: String -> [(String, Compiler)]
-                -> EitherT ServantErr IO Compiler
+                -> ExceptT ServantErr IO Compiler
     getCompiler suffix compilers =
       case lookup suffix compilers of
-        Nothing -> left errCompilerNotFound
+        Nothing -> throwE errCompilerNotFound
         Just x  -> return x
 
-    tryLoadCache :: Compiler -> EitherT ServantErr IO (Maybe ByteString)
+    tryLoadCache :: Compiler -> ExceptT ServantErr IO (Maybe ByteString)
     tryLoadCache compiler = do
       cacheExists <- liftIO $ doesFileExist cacheFullPath
       if cacheExists
@@ -65,7 +66,7 @@ loadResource suffix (CacheManager contents cache compilers) path = do
             else Just <$> readFile cacheFullPath
         else return Nothing
 
-    loadResource' :: Compiler -> EitherT ServantErr IO ByteString
+    loadResource' :: Compiler -> ExceptT ServantErr IO ByteString
     loadResource' compiler = liftIO $ do
       result <- compile compiler resourceFullPath
       createDirectoryIfMissing True $ joinPath [cache, path]

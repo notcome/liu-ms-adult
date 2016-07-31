@@ -1,15 +1,13 @@
 {-# LANGUAGE TypeOperators #-}
 
 module LiuMS.Config
-  ( Config, Language, SiteInfo (..)
+  ( Config (..), Language, SiteInfo (..)
   , liuMSInfo, mkConfig
   , askContentPath, askCacheManager, askSiteInfo
-
-  , Handler, runHandlerNat
   ) where
 
 import Control.Monad.Reader
-import Control.Monad.Trans.Either
+import Control.Monad.Trans.Except
 import Servant
 
 import LiuMS.CacheManager
@@ -66,11 +64,3 @@ askCacheManager = cacheManager <$> ask
 askSiteInfo     :: (MonadReader Config m) => m SiteInfo
 askSiteInfo     = do infos <- siteInfo <$> ask
                      return $ snd $ head infos
-
-type Handler = ReaderT Config (EitherT ServantErr IO)
-
-runHandlerNat :: Config -> (Handler :~> EitherT ServantErr IO)
-runHandlerNat config = Nat $ runHandlerNat' config where
-  runHandlerNat' :: Config
-                  -> (forall a. Handler a -> EitherT ServantErr IO a)
-  runHandlerNat' config handler = runReaderT handler config

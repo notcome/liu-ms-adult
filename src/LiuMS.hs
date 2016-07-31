@@ -7,7 +7,7 @@ module LiuMS where
 
 import Control.Monad
 import Control.Monad.Reader
-import Control.Monad.Trans.Either
+import Control.Monad.Trans.Except
 import Control.Monad.IO.Class
 import System.Directory
 
@@ -20,8 +20,8 @@ import Text.Pandoc.Options
 import Text.Pandoc.Readers.Markdown
 import Text.Pandoc.Writers.HTML
 
-import Servant
-import Servant.API.WaiApp
+import Servant hiding (Handler)
+import Servant.Utils.StaticFiles
 
 import System.FilePath (addTrailingPathSeparator)
 import Network.Wai
@@ -36,11 +36,11 @@ import LiuMS.CacheManager
 
 type Gets = Get '[PlainHtml :<- Basic] Html
 
-type SiteAPI    = Gets
-  :<|> "about" :> Gets
-  -- :<|> "posts"    :> PostsAPI
-  -- :<|> "projects" :> ProjectsAPI
-  :<|> "static" :> WaiApp
+type SiteAPI = ConfiglessAPI :<|> ConfigfulAPI
+
+type ConfiglessAPI = "static" :> Raw
+type ConfigfulAPI  = Gets
+     :<|> "about" :> Gets
 
 type PostsAPI = Capture "year"  Integer
              :> Capture "month" Integer
@@ -55,7 +55,7 @@ hostPage page = do
   let pageDir  = root ++ "/contents/" ++ page ++ "/"
   let textPath = pageDir ++ "index.md"
   exists   <- liftIO $ doesFileExist textPath
-  unless exists $ lift (left fileNotFoundErr)
+  unless exists $ lift $ throwE fileNotFoundErr
   textFile <- liftIO $ readFile textPath
   let (Right markdown) = readMarkdown def textFile
   return $ writeHtml def markdown
@@ -63,15 +63,9 @@ hostPage page = do
     fileNotFoundErr = err404 {
       errBody = pack $ page ++ " not found." }
 
-hostStatic :: FilePath -> Handler Application
-hostStatic path = do
-  root <- askContentPath
-  return $ Servant.API.WaiApp.serveDirectory $ root ++ "/" ++ path
-
-liuMSServer :: ServerT SiteAPI Handler
-liuMSServer = load "index"
-         :<|> load "about"
-         :<|> hostStatic "static"
+configfulServer :: ServerT ConfigfulAPI Handler
+configfulServer = load "index"
+             :<|> load "about"
   where
     load :: FilePath -> Handler Html
     load path = do
@@ -80,4 +74,10 @@ liuMSServer = load "index"
       return $ unsafeByteString result
 
 server :: Config -> Server SiteAPI
-server config = enter (runHandlerNat config) liuMSServer
+server config = serveDirectory (contentPath config ++ "/static")
+           :<|> enter (runHandlerNat config) configfulServer
+
+type Handler = ReaderT Config (ExceptT ServantErr IO)
+
+runHandlerNat :: Config -> (Handler :~> ExceptT ServantErr IO)
+runHandlerNat config = Nat (flip runReaderT config)

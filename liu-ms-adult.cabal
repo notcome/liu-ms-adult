@@ -40,7 +40,7 @@ library
                       , filepath
                       , http-media
                       , servant
-                      , servant-server >= 0.4 && < 0.5
+                      , servant-server
                       , wai
                       , wai-app-static
 
@@ -63,7 +63,7 @@ executable liums
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , liu-ms-adult
-                     , servant-server >= 0.4 && < 0.5
+                     , servant-server
                      , wai
                      , warp
                      , directory
